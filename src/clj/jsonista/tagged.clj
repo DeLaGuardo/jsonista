@@ -41,7 +41,7 @@
 
    This provides both encoders and decoders and is a means of using jsonista to replace something
    like transit, while still maintaining support for more EDN types. Types are encoded using a JSON
-   list and a customizable tag. For example, `:foo/bar` would serialize to `[\"!kw\", \"foo/bar\"]`
+   list and a customizable tag. For example, `:foo/bar` would serialize to `[\"!kw\", [\"foo\", \"bar\"]]`
    by default, where the first string in the JSON list is a tag for what follows.
 
        (def mapper (j/object-mapper
@@ -49,7 +49,7 @@
                       :modules [(jt/module
                                   {:handlers {Keyword {:tag \"!kw\"
                                                        :encode jt/encode-keyword
-                                                       :decode keyword}
+                                                       :decode jt/decode-keyword}
                                               PersistentHashSet {:tag \"!set\"
                                                                  :encode jt/encode-collection
                                                                  :decode set}}})]}))
@@ -58,7 +58,7 @@
           (j/write-value-as-string mapper)
           (doto prn)
           (j/read-value mapper))
-      ; prints \"{\\\"kikka\\\":[\\\"!set\\\",[[\\\"!kw\\\",\\\"kukka\\\"],[\\\"!kw\\\",\\\"kakka\\\"]]]}\"
+      ; prints \"{\\\"kikka\\\":[\\\"!set\\\",[[\\\"!kw\\\",[\\\"kukka\\\"]],[\\\"!kw\\\",[\\\"kakka\\\"]]]]}\"
       ; => {:kikka #{:kukka :kakka}}"
   ^SimpleModule
   [{:keys [handlers]}]
